@@ -1,0 +1,28 @@
+server:
+  port: 8088
+
+spring:
+  mvc:
+    hiddenmethod:
+      filter:
+        enabled: true
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://demo-postgres:5432/demo
+    username: demouser
+    password: demo-p@ssw0rd
+  sql:
+    init:
+      mode: always
+      encoding: UTF-8
+
+logging:
+  level:
+    root: ERROR
+    '[org.springframework.web]': ERROR
+    '[kr.datasolution.kdigital2023]': DEBUG
+
+mybatis:
+  mapper-locations: classpath:/mapper/**/*.xml
+  configuration:
+    map-underscore-to-camel-case: true    

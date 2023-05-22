@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>○○○ Groupware System - 관리자</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
+		<script th:inline="javascript">
+			var userList = /*[[${userList}]]*/ null;
+			
+			function getUserDetail(userId) {
+				var userDetail = userList.find( user =>	user.userId == userId);
+				
+				if(userDetail) {
+					var baseDiv = document.getElementById("user-detail");
+					console.log(userDetail);
+					
+					document.getElementById("userId").value = userDetail.userId;
+					document.getElementById("userName").value = userDetail.userName;
+					document.getElementById("email").value = userDetail.email;
+					document.getElementById("phoneNo").value = userDetail.phoneNo;
+					
+					document.getElementsByName("hobbies").forEach( (hobby) => {
+						hobby.checked = userDetail.hobbies.includes(parseInt(hobby.value));
+					});
+					
+					for(var i=0; 
+						i < document.getElementById("departmentId").children.length;
+						i++) {
+						const opt = document.getElementById("departmentId").children[i];
+						opt.selected = ( opt.value == userDetail.departmentId )
+					}
+					
+					for(var i=0; 
+						i < document.getElementById("statusId").children.length;
+						i++) {
+						const opt = document.getElementById("statusId").children[i];
+						opt.selected = ( opt.value == userDetail.statusId )
+					}
+					
+					document.getElementById("userUpdateForm").action = "/admin/user/" + userDetail.userId;
+					document.getElementById("userDeleteForm").action = "/admin/user/" + userDetail.userId;
+					
+				
+				}
+
+			}
+			
+			function search() {
+				const srchWrd = document.getElementById("search").value;
+	
+				const byId = userList.find( user => srchWrd == user.userId);
+				if(byId) {
+					getUserDetail(byId.userId);
+					return;
+				}
+				
+				const byName = userList.find( user => srchWrd == user.userName);
+				if(byName) {
+					getUserDetail(byName.userId);
+					return;
+				}
+				
+				alert("대상을 찾을 수 없습니다.");
+				
+			}
+		</script>
+	</head>
+	<body style="margin: 1em;">
+		<h1>○○○ Groupware System - 관리자</h1>
+		<div class="wrap">
+			<nav style="margin: 1rem 0 1rem 0">
+				<a href="#">사용자 관리</a> | 
+				<a href="/admin/hobbyMgmt.html" th:href="@{/admin/hobby}">취미 관리</a> | 
+				<a href="/admin/departmentMgmt.html" th:href=@{/admin/department}>부서 관리</a>	
+			</nav>
+			<!-- content -->
+			<div class="content">
+				<div class="search" style="margin-bottom: 30px;">
+					<label for="search">ID/이름</label>
+					<input type="text" id="search" style="min-width: 800px" autocomplete="off">
+					<input type="button" onclick="search()" value="검색">
+				</div>
+				<div class="user-list" id="user-list" style="width: 500px; height: 100%; float: left; background-color: aqua;">
+					사용자목록 (ID클릭)
+					<table style="width: 100%;">
+						<thead>
+							<tr>
+								<th style="width: 25%;">ID</th>
+								<th style="width: 25%;">이름</th>
+								<th style="width: 25%;">부서</th>
+								<th style="width: 25%;">상태</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr th:each="user : ${userList}">
+								<td>
+									<a  href="#" th:text="${user.userId}" th:onclick="getUserDetail( [[${user.userId}]] )">ID</a>
+								</td>
+								<td>
+									<a  href="#" th:text="${user.userName}" th:onclick="getUserDetail( [[${user.userId}]] )">이름</a>
+								</td>
+								<td th:text="${user.department}">부서</td>
+								<td th:text="${user.status}">상태</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="user-detail" id="user-detail" style="width:calc(100%-500px); min-width:300px; max-width: 500px; float: left; background-color: coral;">
+					상세정보
+					<form id="userUpdateForm" th:action="@{/admin/user/{userId}(userId=${userId})}" th:object="${userInfo}" th:method="put">
+						<table>
+							<colgroup>
+								<col style="width: 100px;">
+								<col>
+							</colgroup>
+							<tr>
+								<th>ID</th>
+								<td style="min-width: 200px;"><input type="text" th:field="*{userId}" readonly></td>
+							</tr>
+							<tr>
+								<th>이름</th>
+								<td style="min-width: 200px;"><input type="text" th:field="*{userName}" readonly></td>
+							</tr>
+							<tr>
+								<th>전화번호</th>
+								<td style="min-width: 200px;"><input type="text" th:field="*{phoneNo}" readonly></td>
+							</tr>
+							<tr>
+								<th>이메일</th>
+								<td style="min-width: 200px;"><input type="text" th:field="*{email}" readonly></td>
+							</tr>
+							<tr>
+								<th>취미</th>
+								<td style="min-width: 200px;">
+		  							<input type="checkbox"
+										th:each="hobby : ${allHobbies}" 
+										th:text="${hobby.hobby}" 
+										th:value="${hobby.id}"
+										th:field="*{hobbies}"
+										th:checked="${userInfo.hobbies} != null and ${#lists.contains(userInfo.hobbies, hobby.id)}"
+										onclick="return false;">
+								</td>
+							</tr>							
+							<tr>
+								<th>부서</th>
+								<td style="min-width: 200px;">
+									<select th:field="*{departmentId}" style="width: 180px;">
+										<option value="">-선택-</option>
+										<option th:each="department: ${allDepartment}"
+												th:value="${department.id}"
+												th:text="${department.department}"
+												th:selected="${department.id} eq ${departmentId}">부서옵션</option> 
+									</select>
+								</td>
+							</tr>
+
+							<tr>
+								<th>상태</th>
+								<td style="min-width: 200px;">
+									<select th:field="*{statusId}" style="width: 180px;">
+										<option value="">-선택-</option>
+										<option th:each="userStatus: ${allUserStatus}"
+												th:value="${userStatus.id}"
+												th:text="${userStatus.status}"
+												th:selected="${userStatus.id} eq ${statusId}">상태옵션</option>
+									</select>
+								</td>
+							</tr>
+						</table>
+						<input type="hidden" name="_method" value="PUT">
+						<input type="submit" value="저장">
+					</form>
+					<form  id="userDeleteForm" th:action="@{/admin/user/{userId}(userId=${userId})}" th:object="${userInfo}" th:method="delete">
+						
+						<input type="submit" value="삭제">
+					</form>
+				</div>
+			</div>	  
+		</div>
+	</body>
+</html>

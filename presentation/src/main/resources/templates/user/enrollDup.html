@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>○○○ Groupware System - 사용자 ID 중복</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
+	</head>
+	<body>
+		<p>신청하신 ID(<span th:text="${userInfo.userId}" style="font-weight: bold; font-style: italic;"></span>)는 이미 등록되어 있습니다.</p>
+		<a href="/user">다시 작성하기</a>
+	</body>
+	
+</html>

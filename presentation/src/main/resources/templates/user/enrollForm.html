@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>○○○ Groupware System - 사용자 등록 요청</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
+	</head>
+	<body style="margin: 1em;">
+		<h1>○○○ Groupware System - 사용자 등록 요청</h1>
+		<div>
+			<form th:action="@{/user}" th:object="${userInfo}" method="post" autocomplete="off">
+				<table>
+					<tr>
+						<th>ID</th>
+						<td><input type="text" th:field="*{userId}" placeholder="사용할 ID를 입력하세요"></td>
+					</tr>
+					<tr>
+						<th>이름</th>
+						<td><input type="text" th:field="*{userName}" placeholder="본인 이름을 입력하세요"></td>
+					</tr>
+					<tr>
+						<th>전화번호</th>
+						<td><input type="text" th:field="*{phoneNo}" placeholder="000-0000-0000"></td>
+					</tr>
+					<tr>
+						<th>이메일</th>
+						<td><input type="text" th:field="*{email}" placeholder="you@domain.com"></td>
+					</tr>
+					<tr>
+						<th>취미(복수선택가능)</th>
+						<td>
+							<!--<input type="checkbox">등산<input type="checkbox">게임-->
+							<input type="checkbox" name="hobbies" 
+								th:each="hobby : ${allHobbies}" 
+								th:text="${hobby.hobby}" 
+								th:value="${hobby.id}"
+								th:field="*{hobbies}">
+						</td>
+					</tr>
+				</table>
+				<input type="submit" value="등록 요청">
+			</form>
+		</div>
+	</body>
+</html>

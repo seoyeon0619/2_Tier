@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="ko" xmlns:th="http://www.thymeleaf.org">
+	<head>
+		<title>○○○ Groupware System - 관리자</title>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
+	</head>
+	<body style="margin: 1em;">
+		<h1>○○○ Groupware System - 관리자</h1>
+		<div class="wrap">
+			<nav style="margin: 1rem 0 1rem 0">
+				<a href="/admin/index.html" th:href="@{/admin}">사용자 관리</a> | 
+				<a href="#">취미 관리</a> | 
+				<a href="/admin/departmentMgmt.html" th:href="@{/admin/department}">부서 관리</a>	
+			</nav>
+			
+			<table style="width:600px">
+				<thead>
+					<tr>
+						<th width="width:500px">취미</th>
+						<th>관리</th>
+					</tr>
+				</thead>
+				<tbody>
+
+					<tr>
+						<form th:action="@{/admin/hobby}" th:object="${hobby}" method="post">
+							<td>
+								<input type="text" th:field="*{hobby}" placeholder="신규등록 취미 입력" style="width:100%">
+							</td>
+							<td>
+								<input type="submit" value="추가">
+							</td>
+						</form>
+					</tr>
+					<tr th:each="hobby : ${allHobbies}">
+						<form th:action="@{/admin/hobby/{hobbyId}(hobbyId=${hobby.id})}" th:method="delete">
+							<td th:text="${hobby.hobby}">취미</td>
+							<td><input type="submit" value="삭제"></td>
+						</form>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	</body>
+</html>
